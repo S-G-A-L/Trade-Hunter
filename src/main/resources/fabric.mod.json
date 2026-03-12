@@ -1,0 +1,28 @@
+{
+	"schemaVersion": 1,
+	"id": "tradehunter",
+	"version": "1.0",
+	"name": "Trade Hunter",
+	"description": "This is a mod created to find enchantments trades",
+	"authors": [
+		"SGAL"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/tradehunter/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"com.tradehunter.TradeHunterClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.15.0",
+		"minecraft": "~1.21.4",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
