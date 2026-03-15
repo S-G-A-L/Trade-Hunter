@@ -1,0 +1,29 @@
+{
+	"schemaVersion": 1,
+	"id": "tradehunter",
+	"version": "1.0.1",
+	"name": "Trade Hunter",
+	"description": "Trade Hunter by SGAL",
+	"authors": [
+		"SGAL"
+	],
+	"contact": {
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "MIT",
+	"icon": "assets/tradehunter/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"com.tradehunter.TradeHunterClient"
+		]
+	},
+
+	"depends": {
+		"fabricloader": ">=0.16.0",
+		"minecraft": "1.21.4",
+		"java": ">=21",
+		"fabric-api": "*",
+		"trade_cycling": "*"
+	}
+}
