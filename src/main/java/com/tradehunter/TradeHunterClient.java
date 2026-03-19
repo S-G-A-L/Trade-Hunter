@@ -160,7 +160,7 @@ public class TradeHunterClient implements ClientModInitializer {
 
                 boolean foundTarget = false;
 
-
+                boolean hasLockedTrade = offers.stream().anyMatch(TradeOffer::isDisabled);
 
                 for (TradeOffer offer : offers) {
 
@@ -171,8 +171,6 @@ public class TradeHunterClient implements ClientModInitializer {
                     ItemEnchantmentsComponent enchants = EnchantmentHelper.getEnchantments(result);
 
                     int price = offer.getOriginalFirstBuyItem().getCount();
-
-
 
                     for (Object2IntMap.Entry<RegistryEntry<Enchantment>> entry : enchants.getEnchantmentEntries()) {
 
@@ -210,7 +208,7 @@ public class TradeHunterClient implements ClientModInitializer {
 
                                     foundTarget = true;
 
-                                    chat("§6[!] ENCONTRADO: §e" + id + " " + level + " §aPrecio: " + price);
+                                    chat("§6[!] FOUND: §e" + id + " " + level + " §aPrice: " + price);
 
                                 }
 
@@ -224,18 +222,15 @@ public class TradeHunterClient implements ClientModInitializer {
 
 
 
-                if (!foundTarget) {
-
+                if (!foundTarget && !hasLockedTrade) {
                     pressTradeCycleButton(merchantScreen);
-
                     cycleDelay = 10;
-
-                } else {
-
+                } else if (hasLockedTrade) {
+                    chat("§cVillager is locked, Stopping Cyclic.");
                     running = false;
-
-                    chat("§bBusqueda finalizada.");
-
+                } else {
+                    running = false;
+                    chat("§bSearch Stopped.");
                 }
 
             }
@@ -301,6 +296,38 @@ public class TradeHunterClient implements ClientModInitializer {
                             return 1;
 
                         }))
+
+                        .then(literal("remove")
+                                .then(argument("enchant", StringArgumentType.string())
+                                        .then(argument("level", IntegerArgumentType.integer())
+                                                .then(argument("price", IntegerArgumentType.integer())
+                                                        .executes(ctx -> {
+
+                                                            String ench = StringArgumentType.getString(ctx, "enchant");
+                                                            int level = IntegerArgumentType.getInteger(ctx, "level");
+                                                            int price = IntegerArgumentType.getInteger(ctx, "price");
+
+                                                            String targetId = ench.contains(":") ? ench : "minecraft:" + ench;
+
+                                                            boolean removed = targets.removeIf(t ->
+                                                                    t.id.equals(targetId) &&
+                                                                            t.level == level &&
+                                                                            t.maxPrice == price
+                                                            );
+
+                                                            if (removed) {
+                                                                saveTargets();
+                                                                chat("Removed target: " + ench + " lvl " + level + " price <= " + price);
+                                                            } else {
+                                                                chat("§cTarget Not Found.");
+                                                            }
+
+                                                            return 1;
+                                                        })
+                                                )
+                                        )
+                                )
+                        )
 
                         .then(literal("clear").executes(ctx -> {
 
